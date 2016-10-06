@@ -1,5 +1,6 @@
 package com.barbershop.animation;
 
+import com.barbershop.animation.sprite.Sprite;
 import com.barbershop.animation.sprite.SpriteSheet;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -34,6 +35,17 @@ public class AnimationMain extends Application {
     private void draw(GraphicsContext gc) {
         InputStream spritesInputStream = AnimationMain.class.getClassLoader().getResourceAsStream("sprites-kanto-transparent.png");
         SpriteSheet spriteSheet = new SpriteSheet(spritesInputStream);
-        spriteSheet.getSprite(0, 0, 32, 32, gc);
+        int x = 0, y = 0, width = 32, height = 32;
+
+        Sprite sprite = spriteSheet.getSprite(x, y, width, height);
+
+        gc.drawImage(sprite.getFramesUp().get(0), 0, 0, width, height);
+        gc.drawImage(sprite.getFramesUp().get(1), 0, 32, width, height);
+        gc.drawImage(sprite.getFramesDown().get(0), 0, 2 * 32, width, height);
+        gc.drawImage(sprite.getFramesDown().get(1), 0, 3 * 32, width, height);
+        gc.drawImage(sprite.getFramesLeft().get(0), 32, 0, width, height);
+        gc.drawImage(sprite.getFramesLeft().get(1), 32, 32, width, height);
+        gc.drawImage(sprite.getFramesRight().get(0), 32, 2 * 32, width, height);
+        gc.drawImage(sprite.getFramesRight().get(1), 32, 3 * 32, width, height);
     }
 }
