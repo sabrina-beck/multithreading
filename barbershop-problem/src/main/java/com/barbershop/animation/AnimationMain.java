@@ -15,7 +15,7 @@ import java.io.InputStream;
 public class AnimationMain extends Application {
 
     public static final int SCREEN_WIDTH = 500;
-    public static final int SCREEN_HEIGHT = 500;
+    public static final int SCREEN_HEIGHT = 300;
 
     public static void main(String[] args) {
         launch(args);
