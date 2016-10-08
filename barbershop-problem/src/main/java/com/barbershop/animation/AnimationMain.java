@@ -1,15 +1,21 @@
 package com.barbershop.animation;
 
+import com.barbershop.animation.character.CharacterRandomizer;
+import com.barbershop.animation.character.Position;
+import com.barbershop.animation.scenario.Scenario;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.Pane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
+import java.io.InputStream;
 
 public class AnimationMain extends Application {
 
-    private Canvas canvas;
-    private Scene scene;
+    public static final int SCREEN_WIDTH = 500;
+    public static final int SCREEN_HEIGHT = 500;
 
     public static void main(String[] args) {
         launch(args);
@@ -18,16 +24,32 @@ public class AnimationMain extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Pokemon Center Problem");
 
-        canvas = new Canvas(500, 500);
+        Canvas animationLayer = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
+        Canvas scenarioLayer = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        InputStream floorIS = Scenario.class.getClassLoader().getResourceAsStream("floor.png");
+        BackgroundImage backgroundImage = new BackgroundImage(new Image(floorIS),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
 
         Pane pane = new Pane();
-        pane.getChildren().add(canvas);
-        scene = new Scene(pane, 500, 500);
+        pane.setBackground(new Background(backgroundImage));
+
+        pane.getChildren().add(scenarioLayer);
+        pane.getChildren().add(animationLayer);
+        Scene scene = new Scene(pane, SCREEN_WIDTH, SCREEN_HEIGHT);
         primaryStage.setScene(scene);
 
         primaryStage.show();
 
-        Thread thread = new Thread(new ThreadLouca(canvas.getGraphicsContext2D()));
+        Scenario scenario = new Scenario(scenarioLayer);
+        scenario.draw();
+
+        Position initialPosition = new Position(scenario.getCarpetPosition().getX(),
+                scenario.getCarpetPosition().getY() - 10);
+        CharacterRandomizer characterRandomizer = new CharacterRandomizer(initialPosition);
+
+        Thread thread = new Thread(new ThreadLouca(animationLayer, characterRandomizer.newCharacter()));
         thread.start();
     }
 

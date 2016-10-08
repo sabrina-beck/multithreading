@@ -1,8 +1,9 @@
-package com.barbershop.animation.sprite;
+package com.barbershop.animation.character;
 
 import com.barbershop.animation.AnimationMain;
 
 import java.io.InputStream;
+import java.lang.*;
 import java.util.List;
 import java.util.Random;
 
@@ -11,12 +12,15 @@ public class CharacterRandomizer {
     public static final String SPRITES_SHEET_FILE = "sprites-kanto-transparent.png";
     public static final int SPRITE_WIDTH = 32;
     public static final int SPRITE_HEIGHT = 32;
-    public static final int CHARACTERS_WIDTH = 50;
-    public static final int CHARACTERS_HEIGHT = 50;
+    public static final int CHARACTERS_WIDTH = 40;
+    public static final int CHARACTERS_HEIGHT = 40;
 
     private final CharacterSpriteSheet spriteSheet;
+    private Position initialPosition;
 
-    public CharacterRandomizer() {
+    public CharacterRandomizer(Position initialPosition) {
+        this.initialPosition = initialPosition;
+
         InputStream spritesInputStream = AnimationMain.class.getClassLoader().getResourceAsStream
                 (SPRITES_SHEET_FILE);
         spriteSheet = new CharacterSpriteSheet(spritesInputStream);
@@ -25,6 +29,7 @@ public class CharacterRandomizer {
     public Character newCharacter() {
         Random random = new Random();
 
+        //FIXME array out of bounds D:
         int indexY = random.nextInt(11);
         int indexX = random.nextInt(15);
         if(indexY == 10) {
@@ -38,7 +43,7 @@ public class CharacterRandomizer {
 
         return new Character.Builder()
                 .addSprites(sprites)
-                .initialPosition(new Position(0, 0))
+                .initialPosition(initialPosition)
                 .width(CHARACTERS_WIDTH)
                 .height(CHARACTERS_HEIGHT)
                 .build();

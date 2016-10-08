@@ -1,5 +1,6 @@
-package com.barbershop.animation.sprite;
+package com.barbershop.animation.character;
 
+import com.barbershop.animation.sprite.SpriteSheet;
 import com.google.common.collect.ImmutableList;
 
 import java.io.InputStream;

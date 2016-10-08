@@ -1,4 +1,4 @@
-package com.barbershop.animation.sprite;
+package com.barbershop.animation.character;
 
 import javafx.scene.canvas.GraphicsContext;
 
