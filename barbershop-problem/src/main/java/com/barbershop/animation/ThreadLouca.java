@@ -1,13 +1,9 @@
 package com.barbershop.animation;
 
-import com.barbershop.animation.character.CharacterRandomizer;
-import com.barbershop.animation.character.CharacterSpriteSheet;
-import com.barbershop.animation.character.Position;
 import com.barbershop.animation.character.Character;
+import com.barbershop.animation.character.Position;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-
-import java.io.InputStream;
 
 public class ThreadLouca implements Runnable {
 

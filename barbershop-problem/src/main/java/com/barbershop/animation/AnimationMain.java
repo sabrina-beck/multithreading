@@ -46,7 +46,7 @@ public class AnimationMain extends Application {
         scenario.draw();
 
         Position initialPosition = new Position(scenario.getCarpetPosition().getX(),
-                scenario.getCarpetPosition().getY() - 10);
+                scenario.getCarpetPosition().getY() - 15);
         CharacterRandomizer characterRandomizer = new CharacterRandomizer(initialPosition);
 
         Thread thread = new Thread(new ThreadLouca(animationLayer, characterRandomizer.newCharacter()));
