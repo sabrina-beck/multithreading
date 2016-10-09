@@ -28,7 +28,8 @@ public class AnimationMain extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Pokemon Center Problem");
 
-        Canvas animationLayer = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
+        Canvas nurseLayer = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
+        Canvas pokemonLayer = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
         Canvas scenarioLayer = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
 
         InputStream floorIS = PokemonCenter.class.getClassLoader().getResourceAsStream("floor.png");
@@ -40,14 +41,15 @@ public class AnimationMain extends Application {
         pane.setBackground(new Background(backgroundImage));
 
         pane.getChildren().add(scenarioLayer);
-        pane.getChildren().add(animationLayer);
+        pane.getChildren().add(nurseLayer);
+        pane.getChildren().add(pokemonLayer);
         Scene scene = new Scene(pane, SCREEN_WIDTH, SCREEN_HEIGHT);
         primaryStage.setScene(scene);
 
         primaryStage.setResizable(false);
         primaryStage.show();
 
-        new Thread(new PokemonCenterProblemProducer(scenarioLayer, animationLayer)).start();
+        new Thread(new PokemonCenterProblemProducer(scenarioLayer, pokemonLayer, nurseLayer)).start();
     }
 
 }

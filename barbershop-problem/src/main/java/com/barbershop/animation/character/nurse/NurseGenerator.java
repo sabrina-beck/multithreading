@@ -15,8 +15,8 @@ public class NurseGenerator {
     private static final int SPRITE_HEIGHT = 72;
     private static final int SPRITE_X = 0;
     private static final int SPRITE_Y = 0;
-    public static final int JOY_WIDTH = 68;
-    public static final int JOY_HEIGHT = 72;
+    public static final int JOY_WIDTH = 50;
+    public static final int JOY_HEIGHT = 53;
 
     private final NurseSpriteSheet spriteSheet;
     private Position initialPosition;
