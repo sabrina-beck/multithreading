@@ -16,6 +16,8 @@ public class Character {
     private Position currentPosition;
     private final double width;
     private final double height;
+
+    private Orientation currentOrientation;
     private int spriteIndex;
 
     public Character(List<CharacterSprite> sprites, Position initialPosition, double width, double height) {
@@ -24,6 +26,13 @@ public class Character {
         this.width = width;
         this.height = height;
         this.spriteIndex = 0;
+        this.currentOrientation = Orientation.DOWN;
+    }
+
+    public void stay(GraphicsContext map) {
+        this.clear(map);
+        nextSpriteIndex(Orientation.DOWN);
+        this.draw(map);
     }
 
     public void walkTo(GraphicsContext map, Position destiny) {
@@ -79,22 +88,35 @@ public class Character {
         this.currentPosition = new Position(this.currentPosition.getX() + deltaX,
                 this.currentPosition.getY() + deltaY);
 
-        List<CharacterSprite> sprites = this.spritesByOrientation.get(orientation);
-        this.spriteIndex = (spriteIndex + 1) % sprites.size();
+        nextSpriteIndex(orientation);
 
-        this.draw(map, orientation);
+        this.draw(map);
         sleep();
     }
 
-    private void draw(GraphicsContext gc, Orientation orientation) {
-        CharacterSprite sprite = this.spritesByOrientation.get(orientation).get(spriteIndex);
-        gc.drawImage(sprite.getImage(), this.currentPosition.getX(), this.currentPosition.getY(),
-                this.width, this.height);
+    private void nextSpriteIndex(Orientation orientation) {
+        if(currentOrientation != orientation) {
+            this.spriteIndex = 0;
+            this.currentOrientation = orientation;
+        } else {
+            List<CharacterSprite> sprites = this.spritesByOrientation.get(orientation);
+            this.spriteIndex = (spriteIndex + 1) % sprites.size();
+        }
+    }
+
+    private void draw(GraphicsContext gc) {
+        synchronized (gc) {
+            CharacterSprite sprite = this.spritesByOrientation.get(currentOrientation).get(spriteIndex);
+            gc.drawImage(sprite.getImage(), this.currentPosition.getX(), this.currentPosition.getY(),
+                    this.width, this.height);
+        }
     }
 
     private void clear(GraphicsContext gc) {
-        gc.clearRect(this.currentPosition.getX(), this.currentPosition.getY(),
-                this.width, this.height);
+        synchronized (gc) {
+            gc.clearRect(this.currentPosition.getX(), this.currentPosition.getY(),
+                    this.width, this.height);
+        }
     }
 
     private void sleep() {

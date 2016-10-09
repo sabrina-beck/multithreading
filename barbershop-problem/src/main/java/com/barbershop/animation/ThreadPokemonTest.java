@@ -5,12 +5,12 @@ import com.barbershop.animation.character.Position;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
-public class ThreadLouca implements Runnable {
+public class ThreadPokemonTest implements Runnable {
 
     private final Character character;
-    private Canvas canvas;
+    private final Canvas canvas;
 
-    public ThreadLouca(Canvas canvas, Character character) {
+    public ThreadPokemonTest(Canvas canvas, Character character) {
         this.canvas = canvas;
         this.character = character;
     }

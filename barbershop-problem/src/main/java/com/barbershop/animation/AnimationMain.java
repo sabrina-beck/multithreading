@@ -1,8 +1,8 @@
 package com.barbershop.animation;
 
+import com.barbershop.animation.character.Position;
 import com.barbershop.animation.character.nurse.NurseGenerator;
 import com.barbershop.animation.character.pokemon.PokemonRandomizer;
-import com.barbershop.animation.character.Position;
 import com.barbershop.animation.scenario.Scenario;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -13,13 +13,10 @@ import javafx.stage.Stage;
 
 import java.io.InputStream;
 
-import static com.barbershop.animation.character.pokemon.PokemonRandomizer.POKEMON_HEIGHT;
-import static com.barbershop.animation.scenario.Scenario.CARPET_HEIGHT;
-
 public class AnimationMain extends Application {
 
     public static final int SCREEN_WIDTH = 500;
-    public static final int SCREEN_HEIGHT = 300;
+    public static final int SCREEN_HEIGHT = 350;
 
     public static void main(String[] args) {
         launch(args);
@@ -50,13 +47,20 @@ public class AnimationMain extends Application {
         Scenario scenario = new Scenario(scenarioLayer);
         scenario.draw();
 
+        //WaitingRoom waitingRoom = new WaitingRoom(scenarioLayer, 10);
+        //waitingRoom.draw();
+
         Position initialPosition = scenario.getPokemonInitialPosition();
         PokemonRandomizer characterRandomizer = new PokemonRandomizer(initialPosition);
-        //NurseGenerator nurseGenerator = new NurseGenerator(initialPosition);
+        Thread pokemonThread = new Thread(new ThreadPokemonTest(animationLayer, characterRandomizer.newPokemon()));
+        pokemonThread.setDaemon(true);
 
-        Thread thread = new Thread(new ThreadLouca(animationLayer, characterRandomizer.newPokemon()));
-        //Thread thread = new Thread(new ThreadLouca(animationLayer, nurseGenerator.newJoy()));
-        thread.start();
+        NurseGenerator nurseGenerator = new NurseGenerator(new Position(100, 100));
+        Thread joyThread = new Thread(new ThreadJoyTest(animationLayer, nurseGenerator.newJoy()));
+        joyThread.setDaemon(true);
+
+        joyThread.start();
+        pokemonThread.start();
     }
 
 }
