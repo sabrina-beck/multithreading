@@ -1,13 +1,15 @@
-package com.barbershop.animation.character;
+package com.barbershop.animation.character.pokemon;
 
+import com.barbershop.animation.character.CharacterSprite;
+import com.barbershop.animation.character.Orientation;
 import com.barbershop.animation.sprite.SpriteSheet;
 import com.google.common.collect.ImmutableList;
 
 import java.io.InputStream;
 import java.util.List;
 
-public class CharacterSpriteSheet extends SpriteSheet {
-    public CharacterSpriteSheet(InputStream inputStream) {
+public class PokemonSpriteSheet extends SpriteSheet {
+    public PokemonSpriteSheet(InputStream inputStream) {
         super(inputStream);
     }
 

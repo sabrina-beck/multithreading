@@ -1,6 +1,7 @@
 package com.barbershop.animation;
 
-import com.barbershop.animation.character.CharacterRandomizer;
+import com.barbershop.animation.character.nurse.NurseGenerator;
+import com.barbershop.animation.character.pokemon.PokemonRandomizer;
 import com.barbershop.animation.character.Position;
 import com.barbershop.animation.scenario.Scenario;
 import javafx.application.Application;
@@ -11,6 +12,9 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.InputStream;
+
+import static com.barbershop.animation.character.pokemon.PokemonRandomizer.POKEMON_HEIGHT;
+import static com.barbershop.animation.scenario.Scenario.CARPET_HEIGHT;
 
 public class AnimationMain extends Application {
 
@@ -40,16 +44,18 @@ public class AnimationMain extends Application {
         Scene scene = new Scene(pane, SCREEN_WIDTH, SCREEN_HEIGHT);
         primaryStage.setScene(scene);
 
+        primaryStage.setResizable(false);
         primaryStage.show();
 
         Scenario scenario = new Scenario(scenarioLayer);
         scenario.draw();
 
-        Position initialPosition = new Position(scenario.getCarpetPosition().getX(),
-                scenario.getCarpetPosition().getY() - 15);
-        CharacterRandomizer characterRandomizer = new CharacterRandomizer(initialPosition);
+        Position initialPosition = scenario.getPokemonInitialPosition();
+        PokemonRandomizer characterRandomizer = new PokemonRandomizer(initialPosition);
+        //NurseGenerator nurseGenerator = new NurseGenerator(initialPosition);
 
-        Thread thread = new Thread(new ThreadLouca(animationLayer, characterRandomizer.newCharacter()));
+        Thread thread = new Thread(new ThreadLouca(animationLayer, characterRandomizer.newPokemon()));
+        //Thread thread = new Thread(new ThreadLouca(animationLayer, nurseGenerator.newJoy()));
         thread.start();
     }
 
