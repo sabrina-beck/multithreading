@@ -13,6 +13,7 @@ public class Scenario {
 
     public static final double CARPET_WIDTH = 52.0;
     public static final double CARPET_HEIGHT = 32.0;
+    public static final int WALL_HEIGHT = 120;
 
     private final Image carpet;
     private final Position carpetPosition;
@@ -35,10 +36,16 @@ public class Scenario {
         return new Position(carpetPosition.getX(), carpetPosition.getY() - (POKEMON_HEIGHT - CARPET_HEIGHT));
     }
 
+    public static int getWallHeight() {
+        return WALL_HEIGHT;
+    }
+
     public void draw() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.drawImage(carpet, carpetPosition.getX(), carpetPosition.getY(), CARPET_WIDTH, CARPET_HEIGHT);
-        gc.drawImage(wall, 0, 0, canvas.getWidth(), 120);
+        synchronized (gc) {
+            gc.drawImage(carpet, carpetPosition.getX(), carpetPosition.getY(), CARPET_WIDTH, CARPET_HEIGHT);
+            gc.drawImage(wall, 0, 0, canvas.getWidth(), WALL_HEIGHT);
+        }
     }
 
 }

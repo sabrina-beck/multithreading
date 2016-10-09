@@ -1,5 +1,6 @@
 package com.barbershop.animation.scenario;
 
+import com.barbershop.animation.character.Position;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -9,6 +10,9 @@ import java.io.InputStream;
 public class WaitingRoom {
     private static final String RED_SEAT_FILE_NAME = "red-seat.png";
     private static final String YELLOW_SEAT_FILE_NAME = "yellow-seat.png";
+    private static final double SEAT_WIDTH = 30;
+    private static final double SEAT_HEIGHT = 30;
+    private static final double SPACE_BETWEEN_SEATS = 50;
 
     private final Canvas canvas;
 
@@ -17,7 +21,7 @@ public class WaitingRoom {
 
     private Seat[] seats;
 
-    public WaitingRoom(Canvas canvas, int numberOfSeats) {
+    public WaitingRoom(Canvas canvas, int numberOfSeats, Position initialPosition) {
         InputStream redSeatInputStream =
                 WaitingRoom.class.getClassLoader().getResourceAsStream(RED_SEAT_FILE_NAME);
         this.redSeat = new Image(redSeatInputStream);
@@ -29,11 +33,35 @@ public class WaitingRoom {
         this.canvas = canvas;
 
         this.seats = new Seat[numberOfSeats];
+        Position currentPosition = initialPosition;
+        for (int i = 0; i < numberOfSeats; i++) {
+            seats[i] = new Seat(currentPosition);
+
+            double newX = currentPosition.getX() + SEAT_WIDTH + SPACE_BETWEEN_SEATS;
+            double newY = currentPosition.getY();
+            if (newX > (canvas.getWidth() - SEAT_WIDTH)) {
+                newX = initialPosition.getX();
+                newY = currentPosition.getY() + SEAT_HEIGHT + SPACE_BETWEEN_SEATS;
+            }
+            currentPosition = new Position(newX, newY);
+        }
     }
 
     public void draw() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.drawImage(redSeat, 100, 100, redSeat.getWidth(), redSeat.getHeight());
+
+        synchronized (gc) {
+            boolean red = true;
+            for (Seat seat : this.seats) {
+                Position position = seat.getPosition();
+                if (red) {
+                    gc.drawImage(redSeat, position.getX(), position.getY(), SEAT_WIDTH, SEAT_HEIGHT);
+                } else {
+                    gc.drawImage(yellowSeat, position.getX(), position.getY(), SEAT_WIDTH, SEAT_HEIGHT);
+                }
+                red = !red;
+            }
+        }
     }
 
 }

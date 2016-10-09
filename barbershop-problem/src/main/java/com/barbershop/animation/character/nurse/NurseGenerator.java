@@ -16,6 +16,8 @@ public class NurseGenerator {
     private static final int SPRITE_HEIGHT = 72;
     private static final int SPRITE_X = 0;
     private static final int SPRITE_Y = 0;
+    public static final int JOY_WIDTH = 68;
+    public static final int JOY_HEIGHT = 72;
 
     private final NurseSpriteSheet spriteSheet;
     private Position initialPosition;
@@ -34,8 +36,8 @@ public class NurseGenerator {
         return new Character.Builder()
                 .addSprites(sprites)
                 .initialPosition(initialPosition)
-                .width(SPRITE_WIDTH)
-                .height(SPRITE_HEIGHT)
+                .width(JOY_WIDTH)
+                .height(JOY_HEIGHT)
                 .build();
     }
 }
