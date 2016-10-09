@@ -1,11 +1,17 @@
-package com.barbershop.animation;
+package com.barbershop;
 
-import com.barbershop.animation.scenario.Scenario;
+import com.barbershop.animation.scenario.PokemonCenter;
+import com.barbershop.problem.PokemonCenterProblemProducer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.InputStream;
@@ -13,7 +19,7 @@ import java.io.InputStream;
 public class AnimationMain extends Application {
 
     public static final int SCREEN_WIDTH = 500;
-    public static final int SCREEN_HEIGHT = 400;
+    public static final int SCREEN_HEIGHT = 450;
 
     public static void main(String[] args) {
         launch(args);
@@ -25,7 +31,7 @@ public class AnimationMain extends Application {
         Canvas animationLayer = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
         Canvas scenarioLayer = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        InputStream floorIS = Scenario.class.getClassLoader().getResourceAsStream("floor.png");
+        InputStream floorIS = PokemonCenter.class.getClassLoader().getResourceAsStream("floor.png");
         BackgroundImage backgroundImage = new BackgroundImage(new Image(floorIS),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT);
@@ -41,7 +47,7 @@ public class AnimationMain extends Application {
         primaryStage.setResizable(false);
         primaryStage.show();
 
-        new Thread(new PokemonCenterProblem(scenarioLayer, animationLayer)).start();
+        new Thread(new PokemonCenterProblemProducer(scenarioLayer, animationLayer)).start();
     }
 
 }

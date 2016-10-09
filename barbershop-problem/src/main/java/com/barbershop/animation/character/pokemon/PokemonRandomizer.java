@@ -1,6 +1,6 @@
 package com.barbershop.animation.character.pokemon;
 
-import com.barbershop.animation.AnimationMain;
+import com.barbershop.AnimationMain;
 import com.barbershop.animation.character.Character;
 import com.barbershop.animation.character.CharacterSprite;
 import com.barbershop.animation.character.Position;

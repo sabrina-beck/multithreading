@@ -11,10 +11,10 @@ import static java.util.stream.Collectors.groupingBy;
 
 public class Character {
 
-    public static final int SLEEPING_TIMEOUT = 100;
+    public static final int SLEEPING_TIMEOUT = 50;
     private static final double STEP_DELTA = 1;
     private final Map<Orientation, List<CharacterSprite>> spritesByOrientation;
-    private Position currentPosition;
+    private Position position;
     private final double width;
     private final double height;
 
@@ -23,16 +23,16 @@ public class Character {
 
     public Character(List<CharacterSprite> sprites, Position initialPosition, double width, double height) {
         this.spritesByOrientation = sprites.stream().collect(groupingBy(CharacterSprite::getOrientation));
-        this.currentPosition = initialPosition;
+        this.position = initialPosition;
         this.width = width;
         this.height = height;
         this.spriteIndex = 0;
         this.currentOrientation = Orientation.DOWN;
     }
 
-    public void stay(GraphicsContext map) {
-        this.clear(map);
-        nextSpriteIndex(Orientation.DOWN);
+    public void stay(GraphicsContext map, Orientation orientation) {
+        this.disappear(map);
+        nextSpriteIndex(orientation);
         this.draw(map);
     }
 
@@ -41,14 +41,18 @@ public class Character {
         walkVerticallyTo(map, destiny.getY());
     }
 
+    public Position getPosition() {
+        return position;
+    }
+
     private void walkHorizontallyTo(GraphicsContext map, double x) {
-        if (this.currentPosition.getX() == x) {
+        if (this.position.getX() == x) {
             return;
         }
 
         Orientation orientation;
         double deltaX;
-        if (this.currentPosition.getX() > x) {
+        if (this.position.getX() > x) {
             orientation = Orientation.LEFT;
             deltaX = -STEP_DELTA;
         } else {
@@ -56,19 +60,19 @@ public class Character {
             deltaX = STEP_DELTA;
         }
 
-        while (this.currentPosition.getX() != x) {
+        while (this.position.getX() != x) {
             drawMove(map, orientation, deltaX, 0);
         }
     }
 
     private void walkVerticallyTo(GraphicsContext map, double y) {
-        if (this.currentPosition.getY() == y) {
+        if (this.position.getY() == y) {
             return;
         }
 
         Orientation orientation;
         double deltaY;
-        if (this.currentPosition.getY() > y) {
+        if (this.position.getY() > y) {
             orientation = Orientation.UP;
             deltaY = -STEP_DELTA;
         } else {
@@ -76,7 +80,7 @@ public class Character {
             deltaY = STEP_DELTA;
         }
 
-        while (this.currentPosition.getY() != y) {
+        while (this.position.getY() != y) {
             drawMove(map, orientation, 0, deltaY);
         }
     }
@@ -85,9 +89,9 @@ public class Character {
                           Orientation orientation,
                           double deltaX,
                           double deltaY) {
-        this.clear(map);
-        this.currentPosition = new Position(this.currentPosition.getX() + deltaX,
-                this.currentPosition.getY() + deltaY);
+        this.disappear(map);
+        this.position = new Position(this.position.getX() + deltaX,
+                this.position.getY() + deltaY);
 
         nextSpriteIndex(orientation);
 
@@ -108,14 +112,14 @@ public class Character {
     private void draw(GraphicsContext gc) {
         Platform.runLater(() -> {
             CharacterSprite sprite = this.spritesByOrientation.get(currentOrientation).get(spriteIndex);
-            gc.drawImage(sprite.getImage(), this.currentPosition.getX(), this.currentPosition.getY(),
+            gc.drawImage(sprite.getImage(), this.position.getX(), this.position.getY(),
                     this.width, this.height);
         });
     }
 
-    private void clear(GraphicsContext gc) {
+    public void disappear(GraphicsContext gc) {
         Platform.runLater(() -> {
-            gc.clearRect(this.currentPosition.getX(), this.currentPosition.getY(),
+            gc.clearRect(this.position.getX(), this.position.getY(),
                     this.width, this.height);
         });
     }

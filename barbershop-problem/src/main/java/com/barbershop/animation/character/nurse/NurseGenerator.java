@@ -4,7 +4,6 @@ package com.barbershop.animation.character.nurse;
 import com.barbershop.animation.character.Character;
 import com.barbershop.animation.character.CharacterSprite;
 import com.barbershop.animation.character.Position;
-import javafx.geometry.Pos;
 
 import java.io.InputStream;
 import java.util.List;

@@ -7,13 +7,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 import java.io.InputStream;
+import java.util.Optional;
 
 public class StandingRoom {
     private static final String RED_SEAT_FILE_NAME = "red-seat.png";
     private static final String YELLOW_SEAT_FILE_NAME = "yellow-seat.png";
-    private static final double SEAT_WIDTH = 30;
-    private static final double SEAT_HEIGHT = 30;
-    private static final double SPACE_BETWEEN_SEATS = 50;
+    public static final double SEAT_WIDTH = 30;
+    public static final double SEAT_HEIGHT = 30;
+    public static final double SPACE_BETWEEN_SEATS = 50;
 
     private final Canvas canvas;
 
@@ -46,6 +47,18 @@ public class StandingRoom {
             }
             currentPosition = new Position(newX, newY);
         }
+    }
+
+    public Optional<Seat> getFreeSeat() {
+        synchronized (this.seats) {
+            for(Seat seat : this.seats) {
+                if(!seat.isBusy()) {
+                    seat.setBusy(true);
+                    return Optional.of(seat);
+                }
+            }
+        }
+        return Optional.empty(); // no available seat
     }
 
     public void draw() {
