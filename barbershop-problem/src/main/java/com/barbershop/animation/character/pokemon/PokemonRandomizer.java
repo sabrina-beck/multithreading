@@ -1,6 +1,6 @@
 package com.barbershop.animation.character.pokemon;
 
-import com.barbershop.AnimationMain;
+import com.barbershop.Main;
 import com.barbershop.animation.character.Character;
 import com.barbershop.animation.character.CharacterSprite;
 import com.barbershop.animation.character.Position;
@@ -26,7 +26,7 @@ public class PokemonRandomizer {
     public PokemonRandomizer(Position initialPosition) {
         this.initialPosition = initialPosition;
 
-        InputStream spritesInputStream = AnimationMain.class.getClassLoader().getResourceAsStream
+        InputStream spritesInputStream = Main.class.getClassLoader().getResourceAsStream
                 (SPRITES_SHEET_FILE);
         spriteSheet = new PokemonSpriteSheet(spritesInputStream);
     }
