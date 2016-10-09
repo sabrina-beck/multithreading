@@ -33,6 +33,7 @@ public class PokemonCenterProblemProducer implements Runnable {
 
     protected Semaphore pokemonMutex;
     protected Semaphore nurseMutex;
+    protected Semaphore chargeMutex;
     protected Semaphore standingRoom;
     protected Semaphore sofa;
     protected Semaphore chair;
@@ -55,6 +56,7 @@ public class PokemonCenterProblemProducer implements Runnable {
         this.customers = 0;
         this.pokemonMutex = new Semaphore(1);
         this.nurseMutex = new Semaphore(1);
+        this.chargeMutex = new Semaphore(1);
         this.standingRoom = new Semaphore(6, true);
         this.sofa = new Semaphore(numberOfSeats, true);
         this.chair = new Semaphore(6);
@@ -160,8 +162,8 @@ public class PokemonCenterProblemProducer implements Runnable {
                 nurseMutex.acquire();
                 this.nurse = getNurse().get();
                 this.nurse.serving = true;
-                nurseMutex.release();
                 seatNurseChair();
+                nurseMutex.release();
 
                 sofa.release();
 
@@ -170,6 +172,8 @@ public class PokemonCenterProblemProducer implements Runnable {
                 System.out.println(id + " cortando o cabelo");
 
                 System.out.println(id + " pagando o corte");
+
+                chargeMutex.acquire();
                 cash.release();
                 pay();
                 receipt.acquire();
@@ -184,7 +188,7 @@ public class PokemonCenterProblemProducer implements Runnable {
                 customers--;
                 pokemonMutex.release();
                 System.out.println(id + " saiu da barbearia");
-                leaveAfterPay();
+                leave();
             } catch (Exception e) {
 
             }
@@ -280,6 +284,7 @@ public class PokemonCenterProblemProducer implements Runnable {
                     System.out.println("Enfermeira " + id + "  aceitando pagamento");
                     chargePayment();
                     receipt.release();
+                    chargeMutex.release();
                     returnToChair();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
