@@ -173,8 +173,8 @@ public class PokemonCenterProblemProducer implements Runnable {
                 nurseMutex.acquire();
                 this.nurse = getNurse().get();
                 this.nurse.serving = true;
-                seatNurseChair();
                 nurseMutex.release();
+                seatNurseChair();
 
                 sofa.release();
 
