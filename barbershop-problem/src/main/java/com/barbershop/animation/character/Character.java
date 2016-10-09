@@ -1,5 +1,6 @@
 package com.barbershop.animation.character;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
@@ -105,18 +106,18 @@ public class Character {
     }
 
     private void draw(GraphicsContext gc) {
-        synchronized (gc) {
+        Platform.runLater(() -> {
             CharacterSprite sprite = this.spritesByOrientation.get(currentOrientation).get(spriteIndex);
             gc.drawImage(sprite.getImage(), this.currentPosition.getX(), this.currentPosition.getY(),
                     this.width, this.height);
-        }
+        });
     }
 
     private void clear(GraphicsContext gc) {
-        synchronized (gc) {
+        Platform.runLater(() -> {
             gc.clearRect(this.currentPosition.getX(), this.currentPosition.getY(),
                     this.width, this.height);
-        }
+        });
     }
 
     private void sleep() {

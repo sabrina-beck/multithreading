@@ -1,4 +1,4 @@
-package com.barbershop;
+package com.barbershop.problem;
 
 import java.util.Random;
 import java.util.concurrent.Semaphore;

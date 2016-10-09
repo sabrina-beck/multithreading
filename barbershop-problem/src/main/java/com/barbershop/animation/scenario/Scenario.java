@@ -1,6 +1,7 @@
 package com.barbershop.animation.scenario;
 
 import com.barbershop.animation.character.Position;
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -41,11 +42,11 @@ public class Scenario {
     }
 
     public void draw() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        synchronized (gc) {
+        Platform.runLater(() -> {
+            GraphicsContext gc = canvas.getGraphicsContext2D();
             gc.drawImage(carpet, carpetPosition.getX(), carpetPosition.getY(), CARPET_WIDTH, CARPET_HEIGHT);
             gc.drawImage(wall, 0, 0, canvas.getWidth(), WALL_HEIGHT);
-        }
+        });
     }
 
 }

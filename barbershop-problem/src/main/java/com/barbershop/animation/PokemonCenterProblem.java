@@ -4,7 +4,7 @@ import com.barbershop.animation.character.Position;
 import com.barbershop.animation.character.nurse.NurseGenerator;
 import com.barbershop.animation.character.pokemon.PokemonRandomizer;
 import com.barbershop.animation.scenario.Scenario;
-import com.barbershop.animation.scenario.WaitingRoom;
+import com.barbershop.animation.scenario.StandingRoom;
 import javafx.scene.canvas.Canvas;
 
 public class PokemonCenterProblem implements Runnable {
@@ -22,8 +22,9 @@ public class PokemonCenterProblem implements Runnable {
         Scenario scenario = new Scenario(scenarioLayer);
         scenario.draw();
 
-        WaitingRoom waitingRoom = new WaitingRoom(scenarioLayer, 18, new Position(30, 150));
-        waitingRoom.draw();
+        //max places 18
+        StandingRoom standingRoom = new StandingRoom(scenarioLayer, 18, new Position(30, 150));
+        standingRoom.draw();
 
         Position initialPosition = scenario.getPokemonInitialPosition();
         PokemonRandomizer characterRandomizer = new PokemonRandomizer(initialPosition);

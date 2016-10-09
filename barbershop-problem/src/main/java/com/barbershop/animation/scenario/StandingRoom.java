@@ -1,13 +1,14 @@
 package com.barbershop.animation.scenario;
 
 import com.barbershop.animation.character.Position;
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 import java.io.InputStream;
 
-public class WaitingRoom {
+public class StandingRoom {
     private static final String RED_SEAT_FILE_NAME = "red-seat.png";
     private static final String YELLOW_SEAT_FILE_NAME = "yellow-seat.png";
     private static final double SEAT_WIDTH = 30;
@@ -21,13 +22,13 @@ public class WaitingRoom {
 
     private Seat[] seats;
 
-    public WaitingRoom(Canvas canvas, int numberOfSeats, Position initialPosition) {
+    public StandingRoom(Canvas canvas, int numberOfSeats, Position initialPosition) {
         InputStream redSeatInputStream =
-                WaitingRoom.class.getClassLoader().getResourceAsStream(RED_SEAT_FILE_NAME);
+                StandingRoom.class.getClassLoader().getResourceAsStream(RED_SEAT_FILE_NAME);
         this.redSeat = new Image(redSeatInputStream);
 
         InputStream yellowSeatInputStream =
-                WaitingRoom.class.getClassLoader().getResourceAsStream(YELLOW_SEAT_FILE_NAME);
+                StandingRoom.class.getClassLoader().getResourceAsStream(YELLOW_SEAT_FILE_NAME);
         this.yellowSeat = new Image(yellowSeatInputStream);
 
         this.canvas = canvas;
@@ -48,9 +49,8 @@ public class WaitingRoom {
     }
 
     public void draw() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        synchronized (gc) {
+        Platform.runLater(() -> {
+            GraphicsContext gc = canvas.getGraphicsContext2D();
             boolean red = true;
             for (Seat seat : this.seats) {
                 Position position = seat.getPosition();
@@ -61,7 +61,7 @@ public class WaitingRoom {
                 }
                 red = !red;
             }
-        }
+        });
     }
 
 }
