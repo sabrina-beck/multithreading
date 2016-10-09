@@ -7,8 +7,10 @@ import com.barbershop.animation.character.nurse.NurseGenerator;
 import com.barbershop.animation.character.pokemon.PokemonRandomizer;
 import com.barbershop.animation.scenario.PokemonCenter;
 import com.barbershop.animation.scenario.Seat;
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +28,6 @@ public class PokemonCenterProblemProducer implements Runnable {
     public static final int MINIMUM_SLEEP_BETWEEN_CLIENTS_ARRIVE = 2000;
     public static final Position STANDING_ROOM_POSITION = new Position(50, 200);
 
-    private final Canvas pokemonLayer;
-    private final Canvas nursesLayer;
-
     protected int customers = 0;
 
     protected Semaphore pokemonMutex;
@@ -45,9 +44,10 @@ public class PokemonCenterProblemProducer implements Runnable {
     protected final List<Nurse> nurses;
     protected final PokemonCenter pokemonCenter;
 
-    public PokemonCenterProblemProducer(Canvas scenarioLayer, Canvas pokemonLayer, Canvas nursesLayer) {
-        this.pokemonLayer = pokemonLayer;
-        this.nursesLayer = nursesLayer;
+    private Pane pane;
+
+    public PokemonCenterProblemProducer(Pane pane) {
+        this.pane = pane;
 
         int numberOfPlaces = 18;
         //max places 18
@@ -68,8 +68,9 @@ public class PokemonCenterProblemProducer implements Runnable {
 
         this.nurses = new ArrayList<>();
 
-        this.pokemonCenter = new PokemonCenter(scenarioLayer, numberOfSeats, STANDING_ROOM_POSITION);
+        this.pokemonCenter = new PokemonCenter(newCanvas(), numberOfSeats, STANDING_ROOM_POSITION);
         this.pokemonCenter.draw();
+
     }
 
     @Override
@@ -81,7 +82,7 @@ public class PokemonCenterProblemProducer implements Runnable {
             this.pokemonCenter.addNurseChair(new Position(nursePosition.getX() + 10,
                     nursePosition.getY() + NurseGenerator.JOY_HEIGHT));
 
-            Nurse nurse = newNurse(id, nursePosition, this.nursesLayer);
+            Nurse nurse = newNurse(id, nursePosition, newCanvas());
             this.nurses.add(nurse);
             Thread thread = new Thread(nurse);
             thread.start();
@@ -89,7 +90,7 @@ public class PokemonCenterProblemProducer implements Runnable {
 
         int i = 1;
         while(true) {
-            Pokemon pokemon = newPokemon(i, this.pokemonCenter.getPokemonInitialPosition(), this.pokemonLayer);
+            Pokemon pokemon = newPokemon(i, this.pokemonCenter.getPokemonInitialPosition(), newCanvas());
 
             Thread thread = new Thread(pokemon);
             thread.start();
@@ -107,6 +108,16 @@ public class PokemonCenterProblemProducer implements Runnable {
         }
     }
 
+    private Canvas newCanvas() {
+        Canvas pokemonLayer = new Canvas(pane.getWidth(), pane.getHeight());
+        Platform.runLater(() -> pane.getChildren().add(pokemonLayer));
+        return pokemonLayer;
+    }
+
+    private void removeCanvas(Canvas canvas) {
+        Platform.runLater(() -> pane.getChildren().removeAll(canvas));
+    }
+
     public Pokemon newPokemon(int id, Position initialPosition, Canvas animationLayer) {
         PokemonRandomizer characterRandomizer = new PokemonRandomizer(initialPosition);
         return new Pokemon(id, animationLayer, characterRandomizer.newPokemon());
@@ -121,15 +132,15 @@ public class PokemonCenterProblemProducer implements Runnable {
 
         private int id;
 
+        private final Canvas canvas;
         private final GraphicsContext map;
-        private final double mapHeight;
         private final Character character;
         private final Position initialPosition;
         private Nurse nurse;
 
         public Pokemon(int id, Canvas canvas, Character character) {
             this.id = id;
-            this.mapHeight = canvas.getHeight();
+            this.canvas = canvas;
             this.map = canvas.getGraphicsContext2D();
             this.character = character;
             this.initialPosition = character.getPosition();
@@ -188,7 +199,9 @@ public class PokemonCenterProblemProducer implements Runnable {
                 customers--;
                 pokemonMutex.release();
                 System.out.println(id + " saiu da barbearia");
-                leave();
+                //leave();
+                leaveAfterPay();
+                removeCanvas(this.canvas);
             } catch (Exception e) {
 
             }
@@ -247,7 +260,7 @@ public class PokemonCenterProblemProducer implements Runnable {
 
         private void leaveAfterPay() {
             this.character.walkTo(map, new Position(this.character.getPosition().getX(),
-                    mapHeight - PokemonRandomizer.POKEMON_HEIGHT));
+                    canvas.getHeight() - PokemonRandomizer.POKEMON_HEIGHT));
             this.character.walkTo(map, initialPosition);
             leave();
         }
