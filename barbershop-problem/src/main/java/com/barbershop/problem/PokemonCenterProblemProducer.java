@@ -123,6 +123,7 @@ public class PokemonCenterProblemProducer implements Runnable {
         private final double mapHeight;
         private final Character character;
         private final Position initialPosition;
+        private Nurse nurse;
 
         public Pokemon(int id, Canvas canvas, Character character) {
             this.id = id;
@@ -155,9 +156,13 @@ public class PokemonCenterProblemProducer implements Runnable {
 
                 chair.acquire();
                 System.out.println(id + " sentou na cadeira da enfermeira");
+
                 nurseMutex.acquire();
+                this.nurse = getNurse().get();
+                this.nurse.serving = true;
                 seatNurseChair();
                 nurseMutex.release();
+
                 sofa.release();
 
                 customer.release();
@@ -170,6 +175,11 @@ public class PokemonCenterProblemProducer implements Runnable {
                 receipt.acquire();
 
                 chair.release();
+
+                nurseMutex.acquire();
+                this.nurse.serving = false;
+                nurseMutex.release();
+
                 pokemonMutex.acquire();
                 customers--;
                 pokemonMutex.release();
@@ -205,13 +215,8 @@ public class PokemonCenterProblemProducer implements Runnable {
         }
 
         private void seatNurseChair() {
-            Optional<Nurse> availableNurse = nurses.stream().filter(n -> !n.isServing()).findFirst();
-            if(!availableNurse.isPresent()) {
-                System.err.println("There's something wrong!");
-                return;
-            }
-
-            Position nursePosition = availableNurse.get().character.getPosition();
+            Position nursePosition = this.nurse.character.getPosition();
+            System.out.println("Available nurse: " + this.nurse.id);
             Position chairPosition =
                     new Position(nursePosition.getX(), nursePosition.getY() + NurseGenerator.JOY_HEIGHT);
             this.character.walkTo(map, new Position(this.character.getPosition().getX() - SPACE_BETWEEN_SEATS + 15,
@@ -219,6 +224,15 @@ public class PokemonCenterProblemProducer implements Runnable {
             this.character.walkTo(map, new Position(this.character.getPosition().getX(),
                     STANDING_ROOM_POSITION.getY() - PokemonRandomizer.POKEMON_HEIGHT - 15));
             this.character.walkTo(map, new Position(chairPosition.getX(), chairPosition.getY() - 20));
+        }
+
+        private Optional<Nurse> getNurse() {
+            Optional<Nurse> availableNurse = nurses.stream().filter(n -> !n.isServing()).findFirst();
+            if(!availableNurse.isPresent()) {
+                System.err.println("There's something wrong!");
+                return null;
+            }
+            return availableNurse;
         }
 
         private void pay() {
@@ -259,9 +273,6 @@ public class PokemonCenterProblemProducer implements Runnable {
             while (true) {
                 try {
                     customer.acquire();
-                    nurseMutex.acquire();
-                    this.serving = true;
-                    nurseMutex.release();
                     barber.release();
                     System.out.println("Enfermeira " + id + " cortando cabelo");
                     cutCustomersHair();
@@ -270,9 +281,6 @@ public class PokemonCenterProblemProducer implements Runnable {
                     chargePayment();
                     receipt.release();
                     returnToChair();
-                    nurseMutex.acquire();
-                    this.serving = false;
-                    nurseMutex.release();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
