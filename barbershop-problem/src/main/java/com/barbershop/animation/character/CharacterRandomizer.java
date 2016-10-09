@@ -29,7 +29,6 @@ public class CharacterRandomizer {
     public Character newCharacter() {
         Random random = new Random();
 
-        //FIXME [BUG] array out of bounds D:
         int indexY = random.nextInt(11);
         int indexX = random.nextInt(15);
         if(indexY == 10) {
@@ -38,9 +37,6 @@ public class CharacterRandomizer {
 
         int x = indexX * 2 * SPRITE_WIDTH + indexX,
             y = indexY * 4 * SPRITE_HEIGHT + indexY;
-
-        System.out.println("indexX: " + indexX + ", indexY:" + indexY);
-        System.out.println("X: " + x + ", Y:" + y);
 
         List<CharacterSprite> sprites = spriteSheet.getCharacterSprites(x, y, SPRITE_WIDTH, SPRITE_HEIGHT);
 
