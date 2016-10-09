@@ -10,6 +10,8 @@ import java.util.Random;
 public class CharacterRandomizer {
 
     public static final String SPRITES_SHEET_FILE = "sprites-kanto-transparent.png";
+    private static final Random random = new Random();
+
     public static final int SPRITE_WIDTH = 32;
     public static final int SPRITE_HEIGHT = 32;
     public static final int CHARACTERS_WIDTH = 50;
@@ -27,8 +29,6 @@ public class CharacterRandomizer {
     }
 
     public Character newCharacter() {
-        Random random = new Random();
-
         int indexY = random.nextInt(11);
         int indexX = random.nextInt(15);
         if(indexY == 10) {
