@@ -70,7 +70,7 @@ public class PokemonCenterProblemProducer implements Runnable {
 
     @Override
     public void run() {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             int id = i + 1;
             Position nursePosition = new Position(i * NurseGenerator.JOY_WIDTH + i * SPACE_BETWEEN_NURSES + NURSES_MARGIN,
                     this.pokemonCenter.getNurseInitialPosition(NurseGenerator.JOY_HEIGHT));
