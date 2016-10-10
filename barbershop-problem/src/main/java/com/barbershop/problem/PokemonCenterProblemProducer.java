@@ -199,7 +199,6 @@ public class PokemonCenterProblemProducer implements Runnable {
                 customers--;
                 pokemonMutex.release();
                 System.out.println(id + " saiu da barbearia");
-                //leave();
                 leaveAfterPay();
                 removeCanvas(this.canvas);
             } catch (Exception e) {
@@ -293,12 +292,15 @@ public class PokemonCenterProblemProducer implements Runnable {
                     barber.release();
                     System.out.println("Enfermeira " + id + " cortando cabelo");
                     cutCustomersHair();
-                    cash.acquire();
-                    System.out.println("Enfermeira " + id + "  aceitando pagamento");
-                    chargePayment();
-                    receipt.release();
-                    chargeMutex.release();
-                    returnToChair();
+                    if(cash.tryAcquire()) {
+                        System.out.println("Enfermeira " + id + "  aceitando pagamento");
+                        walkToChargeTable();
+                        while(cash.tryAcquire()) {
+                            receipt.release();
+                            chargeMutex.release();
+                        }
+                        returnToChair();
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -313,7 +315,7 @@ public class PokemonCenterProblemProducer implements Runnable {
             }
         }
 
-        private void chargePayment() {
+        private void walkToChargeTable() {
             this.character.walkTo(map, new Position(this.character.getPosition().getX(),
                     this.character.getPosition().getY() + NurseGenerator.JOY_HEIGHT));
             this.character.walkTo(map, new Position(pokemonCenter.getTablePosition().getX() - NurseGenerator.JOY_WIDTH,
