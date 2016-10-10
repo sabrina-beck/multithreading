@@ -200,6 +200,9 @@ public class PokemonCenterProblemProducer implements Runnable {
                 receipt.acquire();
 
                 chair.release();
+                nurseMutex.acquire();
+                this.nurse.serving = false;
+                nurseMutex.release();
 
                 pokemonMutex.acquire();
                 customers--;
@@ -242,7 +245,7 @@ public class PokemonCenterProblemProducer implements Runnable {
         private Optional<Nurse> getNurse() {
             Optional<Nurse> availableNurse = nurses.stream().filter(n -> !n.isServing()).findFirst();
             if(!availableNurse.isPresent()) {
-                System.err.println("There's something wrong!");
+                System.err.println(id + " there's something wrong!");
                 return null;
             }
             return availableNurse;
@@ -299,9 +302,6 @@ public class PokemonCenterProblemProducer implements Runnable {
                     receipt.release();
                     chargeMutex.release();
                     returnToChair();
-                    nurseMutex.acquire();
-                    this.serving = false;
-                    nurseMutex.release();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
