@@ -46,7 +46,7 @@ public class Main extends Application {
         int nurses = Integer.valueOf(getParameters().getUnnamed().get(0));
         int seats = Integer.valueOf(getParameters().getUnnamed().get(1));
 
-        if (nurses > 6 || nurses < 1 || seats < 1 || seats > 17)
+        if (nurses > 6 || nurses < 1 || seats < 1 || seats > 18)
             throw new InvalidParameterException();
 
         new Thread(new PokemonCenterProblemProducer(pane, nurses, seats)).start();
