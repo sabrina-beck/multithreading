@@ -190,9 +190,9 @@ public class PokemonCenterProblemProducer implements Runnable {
 
 
                 System.out.println(id + " pagando o corte");
-                pay();
                 chargeMutex.acquire();
                 cash.release();
+                pay();
                 receipt.acquire();
 
                 chair.release();
