@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +26,7 @@ public class PokemonCenterProblemProducer implements Runnable {
 
     public static final int NURSES_MARGIN = 20;
     public static final int SPACE_BETWEEN_NURSES = 10;
-    public static final int MINIMUM_SLEEP_BETWEEN_CLIENTS_ARRIVE = 2000;
+    public static final int MINIMUM_SLEEP_BETWEEN_CLIENTS_ARRIVE = 1000;
     public static final Position STANDING_ROOM_POSITION = new Position(50, 200);
     public static final int MAX_NUMBER_OF_SEATS = 6;
 
@@ -45,8 +46,9 @@ public class PokemonCenterProblemProducer implements Runnable {
 
     private final int numberOfNurses;
     private final int maxSeats;
-    protected final List<Nurse> nurses;
     protected final PokemonCenter pokemonCenter;
+
+    protected final ConcurrentLinkedQueue<Nurse> nurses;
 
     private Pane pane;
 
@@ -75,7 +77,7 @@ public class PokemonCenterProblemProducer implements Runnable {
         this.cash = new Semaphore(0);
         this.receipt = new Semaphore(0);
 
-        this.nurses = new ArrayList<>();
+        this.nurses = new ConcurrentLinkedQueue<>();
 
         this.pokemonCenter = new PokemonCenter(newCanvas(), numberOfSeats, numberOfPlacesToWaitStanding,
                 STANDING_ROOM_POSITION);
@@ -185,10 +187,7 @@ public class PokemonCenterProblemProducer implements Runnable {
                 seat.get().setBusy(false);
                 System.out.println(id + " sentou na cadeira da enfermeira");
 
-                nurseMutex.acquire();
                 this.nurse = getNurse().get();
-                this.nurse.serving = true;
-                nurseMutex.release();
                 walkToNurseChair();
 
                 sofa.release();
@@ -198,18 +197,11 @@ public class PokemonCenterProblemProducer implements Runnable {
                 System.out.println(id + " cortando o cabelo");
                 Thread.sleep(100);
 
-
                 System.out.println(id + " pagando o corte");
                 chargeMutex.acquire();
                 cash.release();
                 pay();
                 receipt.acquire();
-
-                chair.release();
-
-                nurseMutex.acquire();
-                this.nurse.serving = false;
-                nurseMutex.release();
 
                 pokemonMutex.acquire();
                 customers--;
@@ -251,7 +243,7 @@ public class PokemonCenterProblemProducer implements Runnable {
         }
 
         private Optional<Nurse> getNurse() {
-            Optional<Nurse> availableNurse = nurses.stream().filter(n -> !n.isServing()).findFirst();
+            Optional<Nurse> availableNurse = Optional.of(nurses.remove());
             if(!availableNurse.isPresent()) {
                 System.err.println(id + " there's something wrong!");
                 return null;
@@ -310,6 +302,9 @@ public class PokemonCenterProblemProducer implements Runnable {
                     receipt.release();
                     chargeMutex.release();
                     returnToChair();
+
+                    nurses.add(this);
+                    chair.release();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -320,7 +315,7 @@ public class PokemonCenterProblemProducer implements Runnable {
             int seconds = new Random(3).nextInt() + 1;
             while(seconds > 0) {
                 this.character.stay(map, Orientation.DOWN);
-                Thread.sleep(TimeUnit.SECONDS.toMillis(seconds));
+                TimeUnit.SECONDS.sleep(seconds);
             }
         }
 
