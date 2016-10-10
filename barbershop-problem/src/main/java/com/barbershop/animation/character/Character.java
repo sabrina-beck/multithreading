@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 public class Character {
 
-    public static final int SLEEPING_TIMEOUT = 50;
+    public static final int SLEEPING_TIMEOUT = 10;
     private static final double STEP_DELTA = 1;
     private final Map<Orientation, List<CharacterSprite>> spritesByOrientation;
     private Position position;
