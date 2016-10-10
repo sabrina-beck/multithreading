@@ -27,6 +27,7 @@ public class PokemonCenterProblemProducer implements Runnable {
     public static final int SPACE_BETWEEN_NURSES = 10;
     public static final int MINIMUM_SLEEP_BETWEEN_CLIENTS_ARRIVE = 2000;
     public static final Position STANDING_ROOM_POSITION = new Position(50, 200);
+    public static final int MAX_NUMBER_OF_SEATS = 6;
 
     protected int customers = 0;
 
@@ -53,9 +54,9 @@ public class PokemonCenterProblemProducer implements Runnable {
         this.pane = pane;
 
         int numberOfPlacesToWaitStanding = 1;
-        int numberOfSeats = 4;
+        int numberOfSeats = MAX_NUMBER_OF_SEATS;
         this.maxSeats = maxSeats;
-        if (maxSeats < 4) {
+        if (maxSeats < MAX_NUMBER_OF_SEATS) {
             numberOfSeats = maxSeats;
         } else {
             numberOfPlacesToWaitStanding = maxSeats - numberOfSeats;
@@ -204,12 +205,6 @@ public class PokemonCenterProblemProducer implements Runnable {
                 pay();
                 receipt.acquire();
 
-                chair.release();
-
-                nurseMutex.acquire();
-                this.nurse.serving = false;
-                nurseMutex.release();
-
                 pokemonMutex.acquire();
                 customers--;
                 pokemonMutex.release();
@@ -309,6 +304,12 @@ public class PokemonCenterProblemProducer implements Runnable {
                     receipt.release();
                     chargeMutex.release();
                     returnToChair();
+
+                    chair.release();
+
+                    nurseMutex.acquire();
+                    this.serving = false;
+                    nurseMutex.release();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
