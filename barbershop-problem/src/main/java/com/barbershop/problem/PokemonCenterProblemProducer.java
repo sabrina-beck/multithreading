@@ -26,7 +26,7 @@ public class PokemonCenterProblemProducer implements Runnable {
 
     public static final int NURSES_MARGIN = 20;
     public static final int SPACE_BETWEEN_NURSES = 10;
-    public static final int MINIMUM_SLEEP_BETWEEN_CLIENTS_ARRIVE = 1000;
+    public static final int MINIMUM_SLEEP_BETWEEN_CLIENTS_ARRIVE = 500;
     public static final Position STANDING_ROOM_POSITION = new Position(50, 200);
     public static final int MAX_NUMBER_OF_SEATS = 6;
 
@@ -110,7 +110,7 @@ public class PokemonCenterProblemProducer implements Runnable {
             thread.start();
             i++;
 
-            sleep(new Random().nextInt(1000) + MINIMUM_SLEEP_BETWEEN_CLIENTS_ARRIVE);
+            sleep(new Random().nextInt(1200) + MINIMUM_SLEEP_BETWEEN_CLIENTS_ARRIVE);
         }
     }
 
