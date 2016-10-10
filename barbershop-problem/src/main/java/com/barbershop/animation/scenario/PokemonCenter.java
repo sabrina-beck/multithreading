@@ -36,7 +36,7 @@ public class PokemonCenter {
     private final Canvas canvas;
     private final StandingRoom standingRoom;
 
-    public PokemonCenter(Canvas canvas, int numberOfSeats, Position standingRoomPosition) {
+    public PokemonCenter(Canvas canvas, int numberOfSeats, int numberOfPlacesToWaitStanding, Position standingRoomPosition) {
         this.canvas = canvas;
 
         InputStream carpetInputStream = PokemonCenter.class.getClassLoader().getResourceAsStream(CARPET_FILE_NAME);
@@ -53,7 +53,7 @@ public class PokemonCenter {
                 (PAYMENT_TABLE_FILE_NAME);
         table = new Image(tableInputStream);
 
-        standingRoom = new StandingRoom(canvas, numberOfSeats, standingRoomPosition);
+        standingRoom = new StandingRoom(canvas, numberOfSeats, numberOfPlacesToWaitStanding, standingRoomPosition);
     }
 
     public Position getPokemonInitialPosition() {

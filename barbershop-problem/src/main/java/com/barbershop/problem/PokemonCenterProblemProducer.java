@@ -30,6 +30,7 @@ public class PokemonCenterProblemProducer implements Runnable {
     protected int customers = 0;
 
     protected Semaphore pokemonMutex;
+
     protected Semaphore nurseMutex;
     protected Semaphore chargeMutex;
     protected Semaphore standingRoom;
@@ -40,6 +41,7 @@ public class PokemonCenterProblemProducer implements Runnable {
     protected Semaphore cash;
     protected Semaphore receipt;
 
+    private final int numberOfNurses;
     protected final List<Nurse> nurses;
     protected final PokemonCenter pokemonCenter;
 
@@ -48,15 +50,15 @@ public class PokemonCenterProblemProducer implements Runnable {
     public PokemonCenterProblemProducer(Pane pane) {
         this.pane = pane;
 
-        int numberOfPlaces = 18;
-        //max places 18
-        int numberOfSeats = 18;
+        int numberOfPlacesToWaitStanding = 18;
+        int numberOfSeats = 12;
+        this.numberOfNurses = 6;
 
         this.customers = 0;
         this.pokemonMutex = new Semaphore(1);
         this.nurseMutex = new Semaphore(1);
         this.chargeMutex = new Semaphore(1);
-        this.standingRoom = new Semaphore(6, true);
+        this.standingRoom = new Semaphore(numberOfNurses, true);
         this.sofa = new Semaphore(numberOfSeats, true);
         this.chair = new Semaphore(6);
         this.barber = new Semaphore(0);
@@ -67,14 +69,15 @@ public class PokemonCenterProblemProducer implements Runnable {
 
         this.nurses = new ArrayList<>();
 
-        this.pokemonCenter = new PokemonCenter(newCanvas(), numberOfSeats, STANDING_ROOM_POSITION);
+        this.pokemonCenter = new PokemonCenter(newCanvas(), numberOfSeats, numberOfPlacesToWaitStanding,
+                STANDING_ROOM_POSITION);
         this.pokemonCenter.draw();
 
     }
 
     @Override
     public void run() {
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < numberOfNurses; i++) {
             int id = i + 1;
             Position nursePosition = new Position(i * NurseGenerator.JOY_WIDTH + i * SPACE_BETWEEN_NURSES + NURSES_MARGIN,
                     this.pokemonCenter.getNurseInitialPosition(NurseGenerator.JOY_HEIGHT));
@@ -157,15 +160,19 @@ public class PokemonCenterProblemProducer implements Runnable {
 
                 standingRoom.acquire();
                 System.out.println(id + " entrou na sala de espera");
-                waitStanding();
+                Optional<Seat> freePlaceToWaitStanding = pokemonCenter.getStandingRoom().getFreePlaceToWaitStanding();
+                waitOn(freePlaceToWaitStanding);
 
                 sofa.acquire();
+                freePlaceToWaitStanding.get().setBusy(false);
+
                 System.out.println(id + " sentou no sofa");
-                Seat seat = seatStandingRoom();
+                Optional<Seat> seat = pokemonCenter.getStandingRoom().getFreeSeat();
+                waitOn(seat);
                 standingRoom.release();
 
                 chair.acquire();
-                seat.setBusy(false);
+                seat.get().setBusy(false);
                 System.out.println(id + " sentou na cadeira da enfermeira");
 
                 nurseMutex.acquire();
@@ -179,12 +186,13 @@ public class PokemonCenterProblemProducer implements Runnable {
                 customer.release();
                 barber.acquire();
                 System.out.println(id + " cortando o cabelo");
+                Thread.sleep(100);
+
 
                 System.out.println(id + " pagando o corte");
-
+                pay();
                 chargeMutex.acquire();
                 cash.release();
-                pay();
                 receipt.acquire();
 
                 chair.release();
@@ -210,15 +218,9 @@ public class PokemonCenterProblemProducer implements Runnable {
             character.disappear(map);
         }
 
-        private void waitStanding() {
-            character.stay(map, Orientation.UP);
-        }
-
-        private Seat seatStandingRoom() {
-            Optional<Seat> freeSeat = pokemonCenter.getStandingRoom().getFreeSeat();
+        private void waitOn(Optional<Seat> freeSeat) {
             if(!freeSeat.isPresent()) {
-                System.err.println("There's something wrong!!");
-                return null;
+                throw new IllegalStateException("Seat should be free!!");
             }
 
             Position seatPosition = freeSeat.get().getPosition();
@@ -226,13 +228,10 @@ public class PokemonCenterProblemProducer implements Runnable {
                     character.getPosition().getY()));
             character.walkTo(map, new Position(character.getPosition().getX(), seatPosition.getY()));
             character.walkTo(map, new Position(seatPosition.getX() - 8, seatPosition.getY() - 25));
-
-            return freeSeat.get();
         }
 
         private void walkToNurseChair() {
             Position nursePosition = this.nurse.character.getPosition();
-            System.out.println("Available nurse: " + this.nurse.id);
             Position chairPosition =
                     new Position(nursePosition.getX(), nursePosition.getY() + NurseGenerator.JOY_HEIGHT);
             this.character.walkTo(map, new Position(this.character.getPosition().getX() - SPACE_BETWEEN_SEATS + 15,

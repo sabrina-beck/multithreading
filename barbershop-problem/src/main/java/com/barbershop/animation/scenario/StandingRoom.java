@@ -22,8 +22,9 @@ public class StandingRoom {
     private final Image yellowSeat;
 
     private Seat[] seats;
+    private Seat[] placesToWaitStanding;
 
-    public StandingRoom(Canvas canvas, int numberOfSeats, Position initialPosition) {
+    public StandingRoom(Canvas canvas, int numberOfSeats, int numberOfPlacesToWaitStanding, Position initialPosition) {
         InputStream redSeatInputStream =
                 StandingRoom.class.getClassLoader().getResourceAsStream(RED_SEAT_FILE_NAME);
         this.redSeat = new Image(redSeatInputStream);
@@ -47,6 +48,31 @@ public class StandingRoom {
             }
             currentPosition = new Position(newX, newY);
         }
+
+        this.placesToWaitStanding = new Seat[numberOfPlacesToWaitStanding];
+        for (int i = 0; i < numberOfPlacesToWaitStanding; i++) {
+            placesToWaitStanding[i] = new Seat(currentPosition);
+
+            double newX = currentPosition.getX() + SEAT_WIDTH + SPACE_BETWEEN_SEATS;
+            double newY = currentPosition.getY();
+            if (newX > (canvas.getWidth() - SEAT_WIDTH)) {
+                newX = initialPosition.getX();
+                newY = currentPosition.getY() + SEAT_HEIGHT + SPACE_BETWEEN_SEATS;
+            }
+            currentPosition = new Position(newX, newY);
+        }
+    }
+
+    public Optional<Seat> getFreePlaceToWaitStanding() {
+        synchronized (this.placesToWaitStanding) {
+            for(Seat seat : this.placesToWaitStanding) {
+                if(!seat.isBusy()) {
+                    seat.setBusy(true);
+                    return Optional.of(seat);
+                }
+            }
+        }
+        return Optional.empty(); // no available seat
     }
 
     public Optional<Seat> getFreeSeat() {
