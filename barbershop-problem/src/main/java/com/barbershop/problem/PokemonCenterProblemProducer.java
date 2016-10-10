@@ -43,6 +43,7 @@ public class PokemonCenterProblemProducer implements Runnable {
     protected Semaphore receipt;
 
     private final int numberOfNurses;
+    private final int maxSeats;
     protected final List<Nurse> nurses;
     protected final PokemonCenter pokemonCenter;
 
@@ -53,6 +54,7 @@ public class PokemonCenterProblemProducer implements Runnable {
 
         int numberOfPlacesToWaitStanding = 1;
         int numberOfSeats = 4;
+        this.maxSeats = maxSeats;
         if (maxSeats < 4) {
             numberOfSeats = maxSeats;
         } else {
@@ -154,7 +156,7 @@ public class PokemonCenterProblemProducer implements Runnable {
         public void run() {
             try {
                 pokemonMutex.acquire();
-                if (customers == 16) {
+                if (customers == maxSeats) {
                     pokemonMutex.release();
                     System.out.println(id + " foi embora");
                     leave();
@@ -201,6 +203,7 @@ public class PokemonCenterProblemProducer implements Runnable {
                 receipt.acquire();
 
                 chair.release();
+
                 nurseMutex.acquire();
                 this.nurse.serving = false;
                 nurseMutex.release();
@@ -211,6 +214,7 @@ public class PokemonCenterProblemProducer implements Runnable {
                 System.out.println(id + " saiu da barbearia");
                 leaveAfterPay();
                 removeCanvas(this.map);
+
             } catch (Exception e) {
 
             }
