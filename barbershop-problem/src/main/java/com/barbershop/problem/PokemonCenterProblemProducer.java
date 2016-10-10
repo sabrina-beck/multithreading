@@ -205,6 +205,12 @@ public class PokemonCenterProblemProducer implements Runnable {
                 pay();
                 receipt.acquire();
 
+                chair.release();
+
+                nurseMutex.acquire();
+                this.nurse.serving = false;
+                nurseMutex.release();
+
                 pokemonMutex.acquire();
                 customers--;
                 pokemonMutex.release();
@@ -304,12 +310,6 @@ public class PokemonCenterProblemProducer implements Runnable {
                     receipt.release();
                     chargeMutex.release();
                     returnToChair();
-
-                    chair.release();
-
-                    nurseMutex.acquire();
-                    this.serving = false;
-                    nurseMutex.release();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
