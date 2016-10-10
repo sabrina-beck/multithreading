@@ -211,7 +211,7 @@ public class PokemonCenterProblemProducer implements Runnable {
                 pokemonMutex.acquire();
                 customers--;
                 pokemonMutex.release();
-                System.out.println(id + " saiu da barbearia");
+                System.out.println(id + " saiu do centro pokemon");
                 leaveAfterPay();
                 removeCanvas(this.map);
 
