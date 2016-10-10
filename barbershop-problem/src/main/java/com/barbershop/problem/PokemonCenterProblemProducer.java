@@ -235,9 +235,7 @@ public class PokemonCenterProblemProducer implements Runnable {
         }
 
         private void walkToNurseChair() {
-            Position nursePosition = this.nurse.character.getPosition();
-            Position chairPosition =
-                    new Position(nursePosition.getX(), nursePosition.getY() + NurseGenerator.JOY_HEIGHT);
+            Position chairPosition = this.nurse.getChairPosition();
             this.character.walkTo(map, new Position(this.character.getPosition().getX() - SPACE_BETWEEN_SEATS + 15,
                     this.character.getPosition().getY()));
             this.character.walkTo(map, new Position(this.character.getPosition().getX(),
@@ -286,6 +284,10 @@ public class PokemonCenterProblemProducer implements Runnable {
             this.initialPosition = this.character.getPosition();
 
             this.character.stay(map, Orientation.DOWN);
+        }
+
+        public Position getChairPosition() {
+            return new Position(initialPosition.getX(), initialPosition.getY() + NurseGenerator.JOY_HEIGHT);
         }
 
         public void run() {
