@@ -50,9 +50,14 @@ public class PokemonCenterProblemProducer implements Runnable {
     public PokemonCenterProblemProducer(Pane pane, int maxNurses, int maxSeats) {
         this.pane = pane;
 
-        int numberOfPlacesToWaitStanding = 18;
-        int numberOfSeats = 12;
-        this.numberOfNurses = 6;
+        int numberOfPlacesToWaitStanding = 1;
+        int numberOfSeats = 4;
+        if (maxSeats < 4) {
+            numberOfSeats = maxSeats;
+        } else {
+            numberOfPlacesToWaitStanding = maxSeats - numberOfSeats;
+        }
+        this.numberOfNurses = maxNurses;
 
         this.customers = 0;
         this.pokemonMutex = new Semaphore(1);
