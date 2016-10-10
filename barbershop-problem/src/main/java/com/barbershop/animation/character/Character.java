@@ -1,6 +1,7 @@
 package com.barbershop.animation.character;
 
 import javafx.application.Platform;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
@@ -30,13 +31,13 @@ public class Character {
         this.currentOrientation = Orientation.DOWN;
     }
 
-    public void stay(GraphicsContext map, Orientation orientation) {
+    public void stay(Canvas map, Orientation orientation) {
         this.disappear(map);
         nextSpriteIndex(orientation);
         this.draw(map);
     }
 
-    public void walkTo(GraphicsContext map, Position destiny) {
+    public void walkTo(Canvas map, Position destiny) {
         walkHorizontallyTo(map, destiny.getX());
         walkVerticallyTo(map, destiny.getY());
     }
@@ -45,7 +46,7 @@ public class Character {
         return position;
     }
 
-    private void walkHorizontallyTo(GraphicsContext map, double x) {
+    private void walkHorizontallyTo(Canvas map, double x) {
         if (this.position.getX() == x) {
             return;
         }
@@ -65,7 +66,7 @@ public class Character {
         }
     }
 
-    private void walkVerticallyTo(GraphicsContext map, double y) {
+    private void walkVerticallyTo(Canvas map, double y) {
         if (this.position.getY() == y) {
             return;
         }
@@ -85,7 +86,7 @@ public class Character {
         }
     }
 
-    private void drawMove(GraphicsContext map,
+    private void drawMove(Canvas map,
                           Orientation orientation,
                           double deltaX,
                           double deltaY) {
@@ -109,7 +110,8 @@ public class Character {
         }
     }
 
-    private void draw(GraphicsContext gc) {
+    private void draw(Canvas canvas) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
         Platform.runLater(() -> {
             CharacterSprite sprite = this.spritesByOrientation.get(currentOrientation).get(spriteIndex);
             gc.drawImage(sprite.getImage(), this.position.getX(), this.position.getY(),
@@ -117,10 +119,10 @@ public class Character {
         });
     }
 
-    public void disappear(GraphicsContext gc) {
+    public void disappear(Canvas canvas) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
         Platform.runLater(() -> {
-            gc.clearRect(this.position.getX(), this.position.getY(),
-                    this.width, this.height);
+            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         });
     }
 

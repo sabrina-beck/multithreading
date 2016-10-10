@@ -9,7 +9,6 @@ import com.barbershop.animation.scenario.PokemonCenter;
 import com.barbershop.animation.scenario.Seat;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
@@ -132,16 +131,14 @@ public class PokemonCenterProblemProducer implements Runnable {
 
         private int id;
 
-        private final Canvas canvas;
-        private final GraphicsContext map;
+        private final Canvas map;
         private final Character character;
         private final Position initialPosition;
         private Nurse nurse;
 
         public Pokemon(int id, Canvas canvas, Character character) {
             this.id = id;
-            this.canvas = canvas;
-            this.map = canvas.getGraphicsContext2D();
+            this.map = canvas;
             this.character = character;
             this.initialPosition = character.getPosition();
         }
@@ -201,7 +198,7 @@ public class PokemonCenterProblemProducer implements Runnable {
                 pokemonMutex.release();
                 System.out.println(id + " saiu da barbearia");
                 leaveAfterPay();
-                removeCanvas(this.canvas);
+                removeCanvas(this.map);
             } catch (Exception e) {
 
             }
@@ -262,7 +259,7 @@ public class PokemonCenterProblemProducer implements Runnable {
 
         private void leaveAfterPay() {
             this.character.walkTo(map, new Position(this.character.getPosition().getX(),
-                    canvas.getHeight() - PokemonRandomizer.POKEMON_HEIGHT));
+                    map.getHeight() - PokemonRandomizer.POKEMON_HEIGHT));
             this.character.walkTo(map, initialPosition);
             leave();
         }
@@ -271,15 +268,15 @@ public class PokemonCenterProblemProducer implements Runnable {
     public class Nurse extends Thread {
 
         private final int id;
-        private final GraphicsContext map;
         private final Position initialPosition;
+        private final Canvas map;
         private Boolean serving;
 
         private final Character character;
 
         public Nurse(int id, Canvas canvas, Character character) {
             this.id = id;
-            this.map = canvas.getGraphicsContext2D();
+            this.map = canvas;
             this.character = character;
             this.serving = false;
 
