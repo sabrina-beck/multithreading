@@ -49,7 +49,9 @@ public class Main extends Application {
         if (nurses > 6 || nurses < 1 || seats < 1 || seats > 18)
             throw new InvalidParameterException();
 
-        new Thread(new PokemonCenterProblemProducer(pane, nurses, seats)).start();
+        Thread a = new Thread(new PokemonCenterProblemProducer(pane, nurses, seats));
+        a.setDaemon(true);
+        a.start();
     }
 
 }
