@@ -94,6 +94,7 @@ public class PokemonCenterProblemProducer implements Runnable {
             Nurse nurse = newNurse(id, nursePosition, newCanvas());
             this.nurses.add(nurse);
             Thread thread = new Thread(nurse);
+            thread.setDaemon(true);
             thread.start();
         }
 
@@ -102,6 +103,7 @@ public class PokemonCenterProblemProducer implements Runnable {
             Pokemon pokemon = newPokemon(i, this.pokemonCenter.getPokemonInitialPosition(), newCanvas());
 
             Thread thread = new Thread(pokemon);
+            thread.setDaemon(true);
             thread.start();
             i++;
 
