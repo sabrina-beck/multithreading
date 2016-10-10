@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import static com.barbershop.animation.scenario.StandingRoom.SEAT_WIDTH;
 import static com.barbershop.animation.scenario.StandingRoom.SPACE_BETWEEN_SEATS;
@@ -312,7 +313,7 @@ public class PokemonCenterProblemProducer implements Runnable {
             int seconds = new Random(3).nextInt() + 1;
             while(seconds > 0) {
                 this.character.stay(map, Orientation.DOWN);
-                Thread.sleep(1000);
+                Thread.sleep(TimeUnit.SECONDS.toMillis(seconds));
             }
         }
 
