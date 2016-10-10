@@ -15,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.InputStream;
+import java.security.InvalidParameterException;
 
 public class Main extends Application {
 
@@ -42,7 +43,13 @@ public class Main extends Application {
         primaryStage.setResizable(false);
         primaryStage.show();
 
-        new Thread(new PokemonCenterProblemProducer(pane)).start();
+        int nurses = Integer.valueOf(getParameters().getUnnamed().get(0));
+        int seats = Integer.valueOf(getParameters().getUnnamed().get(1));
+
+        if (nurses > 6 || nurses < 1 || seats < 1 || seats > 18)
+            throw new InvalidParameterException();
+
+        new Thread(new PokemonCenterProblemProducer(pane, nurses, seats)).start();
     }
 
 }

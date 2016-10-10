@@ -47,7 +47,7 @@ public class PokemonCenterProblemProducer implements Runnable {
 
     private Pane pane;
 
-    public PokemonCenterProblemProducer(Pane pane) {
+    public PokemonCenterProblemProducer(Pane pane, int maxNurses, int maxSeats) {
         this.pane = pane;
 
         int numberOfPlacesToWaitStanding = 18;
@@ -65,7 +65,6 @@ public class PokemonCenterProblemProducer implements Runnable {
         this.customer = new Semaphore(0);
         this.cash = new Semaphore(0);
         this.receipt = new Semaphore(0);
-
 
         this.nurses = new ArrayList<>();
 
