@@ -63,9 +63,9 @@ public class PokemonCenterProblemProducer implements Runnable {
         this.pokemonMutex = new Semaphore(1);
         this.nurseMutex = new Semaphore(1);
         this.chargeMutex = new Semaphore(1);
-        this.standingRoom = new Semaphore(numberOfNurses, true);
+        this.standingRoom = new Semaphore(numberOfPlacesToWaitStanding, true);
         this.sofa = new Semaphore(numberOfSeats, true);
-        this.chair = new Semaphore(6);
+        this.chair = new Semaphore(numberOfNurses);
         this.barber = new Semaphore(0);
         this.customer = new Semaphore(0);
         this.cash = new Semaphore(0);
