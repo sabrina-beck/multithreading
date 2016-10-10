@@ -11,8 +11,6 @@ import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -55,14 +53,13 @@ public class PokemonCenterProblemProducer implements Runnable {
     public PokemonCenterProblemProducer(Pane pane, int maxNurses, int maxSeats) {
         this.pane = pane;
 
-        int numberOfPlacesToWaitStanding = 0;
+        int numberOfPlacesToWaitStanding = maxSeats;
         int numberOfSeats = MAX_NUMBER_OF_SEATS;
         this.maxSeats = maxSeats;
         if (maxSeats < MAX_NUMBER_OF_SEATS) {
             numberOfSeats = maxSeats;
-        } else {
-            numberOfPlacesToWaitStanding = maxSeats - numberOfSeats;
         }
+        
         this.numberOfNurses = maxNurses;
 
         this.customers = 0;
@@ -181,9 +178,9 @@ public class PokemonCenterProblemProducer implements Runnable {
                 System.out.println(id + " sentou no sofa");
                 Optional<Seat> seat = pokemonCenter.getStandingRoom().getFreeSeat();
                 waitOn(seat);
-                standingRoom.release();
 
                 chair.acquire();
+                standingRoom.release();
                 seat.get().setBusy(false);
                 System.out.println(id + " sentou na cadeira da enfermeira");
 
