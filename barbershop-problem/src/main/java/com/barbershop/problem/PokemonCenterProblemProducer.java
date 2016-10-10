@@ -164,17 +164,18 @@ public class PokemonCenterProblemProducer implements Runnable {
 
                 sofa.acquire();
                 System.out.println(id + " sentou no sofa");
-                seatStandingRoom();
+                Seat seat = seatStandingRoom();
                 standingRoom.release();
 
                 chair.acquire();
+                seat.setBusy(false);
                 System.out.println(id + " sentou na cadeira da enfermeira");
 
                 nurseMutex.acquire();
                 this.nurse = getNurse().get();
                 this.nurse.serving = true;
                 nurseMutex.release();
-                seatNurseChair();
+                walkToNurseChair();
 
                 sofa.release();
 
@@ -216,11 +217,11 @@ public class PokemonCenterProblemProducer implements Runnable {
             character.stay(map, Orientation.UP);
         }
 
-        private void seatStandingRoom() {
+        private Seat seatStandingRoom() {
             Optional<Seat> freeSeat = pokemonCenter.getStandingRoom().getFreeSeat();
             if(!freeSeat.isPresent()) {
                 System.err.println("There's something wrong!!");
-                return;
+                return null;
             }
 
             Position seatPosition = freeSeat.get().getPosition();
@@ -228,9 +229,11 @@ public class PokemonCenterProblemProducer implements Runnable {
                     character.getPosition().getY()));
             character.walkTo(map, new Position(character.getPosition().getX(), seatPosition.getY()));
             character.walkTo(map, new Position(seatPosition.getX() - 8, seatPosition.getY() - 25));
+
+            return freeSeat.get();
         }
 
-        private void seatNurseChair() {
+        private void walkToNurseChair() {
             Position nursePosition = this.nurse.character.getPosition();
             System.out.println("Available nurse: " + this.nurse.id);
             Position chairPosition =
