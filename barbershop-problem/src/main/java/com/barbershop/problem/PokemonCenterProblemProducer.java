@@ -292,15 +292,12 @@ public class PokemonCenterProblemProducer implements Runnable {
                     barber.release();
                     System.out.println("Enfermeira " + id + " cortando cabelo");
                     cutCustomersHair();
-                    if(cash.tryAcquire()) {
-                        System.out.println("Enfermeira " + id + "  aceitando pagamento");
-                        walkToChargeTable();
-                        while(cash.tryAcquire()) {
-                            receipt.release();
-                            chargeMutex.release();
-                        }
-                        returnToChair();
-                    }
+                    cash.acquire();
+                    System.out.println("Enfermeira " + id + "  aceitando pagamento");
+                    walkToChargeTable();
+                    receipt.release();
+                    chargeMutex.release();
+                    returnToChair();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
