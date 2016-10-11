@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import static com.barbershop.animation.scenario.StandingRoom.SEAT_WIDTH;
 import static com.barbershop.animation.scenario.StandingRoom.SPACE_BETWEEN_SEATS;
 
-public class PokemonCenterProblemProducer implements Runnable {
+public class PokemonCenterProblem implements Runnable {
 
     public static final int NURSES_MARGIN = 20;
     public static final int SPACE_BETWEEN_NURSES = 10;
@@ -50,7 +50,7 @@ public class PokemonCenterProblemProducer implements Runnable {
 
     private Pane pane;
 
-    public PokemonCenterProblemProducer(Pane pane, int maxNurses, int maxSeats) {
+    public PokemonCenterProblem(Pane pane, int maxNurses, int maxSeats) {
         this.pane = pane;
 
         int numberOfPlacesToWaitStanding = maxSeats;

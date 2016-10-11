@@ -1,10 +1,9 @@
 package com.barbershop;
 
 import com.barbershop.animation.scenario.PokemonCenter;
-import com.barbershop.problem.PokemonCenterProblemProducer;
+import com.barbershop.problem.PokemonCenterProblem;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -49,7 +48,7 @@ public class Main extends Application {
         if (nurses > 6 || nurses < 1 || seats < 1 || seats > 18)
             throw new InvalidParameterException();
 
-        Thread a = new Thread(new PokemonCenterProblemProducer(pane, nurses, seats));
+        Thread a = new Thread(new PokemonCenterProblem(pane, nurses, seats));
         a.setDaemon(true);
         a.start();
     }
